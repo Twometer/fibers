@@ -1,9 +1,12 @@
 'use strict';
 
+const events = require('events');
+
 class Fiber {
 
     constructor(spec) {
         this.spec = spec;
+        this.emitter = new events.EventEmitter();
     }
 
     register(router) {
@@ -14,14 +17,14 @@ class Fiber {
         });
 
         router.post("/publish", (req, res, next) => {
-            
-            // TODO forward to websocket
-
+            this.emitter.emit('message', req.body);
             return res.sendStatus(200);
         });
 
         router.ws("/subscribe", (ws, req) => {
-
+            this.emitter.on('message', message => {
+                ws.send(message);
+            });
         });
     }
 
