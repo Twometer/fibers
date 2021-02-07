@@ -23,8 +23,14 @@ class Fiber {
             this.emitter.emit('message', message);
 
             if (this.duplex) {
+                const timeout = setTimeout(() => {
+                    this.emitter.removeAllListeners(message.id);
+                    res.sendStatus(504);
+                }, 30000);
+
                 this.emitter.on(message.id, response => {
                     this.emitter.removeAllListeners(message.id);
+                    clearTimeout(timeout);
                     res.json(response);
                 });
             }
@@ -49,7 +55,7 @@ class Fiber {
                     var json = JSON.parse(data);
                     if (!json.id || !json.payload)
                         return;
-                    
+
                     this.emitter.emit(json.id, json.payload);
                 });
             }
