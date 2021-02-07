@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-var socket = new WebSocket('ws://localhost:8090/test-fiber/subscribe', {
+var socket = new WebSocket('ws://localhost:8090/test-fiber-s/subscribe', {
     headers: {
         Authorization: "X-FiberAuth cvhYgf4yhCWRL59z639x"
     }

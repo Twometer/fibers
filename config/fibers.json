@@ -1,6 +1,12 @@
 [
     {
-        "name": "test-fiber",
+        "mode": "simplex",
+        "name": "test-fiber-s",
+        "key": "cvhYgf4yhCWRL59z639x"
+    },
+    {
+        "mode": "duplex",
+        "name": "test-fiber-d",
         "key": "cvhYgf4yhCWRL59z639x"
     }
 ]

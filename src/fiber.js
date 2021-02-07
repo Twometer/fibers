@@ -1,12 +1,14 @@
 'use strict';
 
 const events = require('events');
+const { v4: uuidv4 } = require('uuid');
 
 class Fiber {
 
     constructor(spec) {
         this.spec = spec;
         this.emitter = new events.EventEmitter();
+        this.duplex = spec.mode === "duplex";
     }
 
     register(router) {
@@ -17,13 +19,23 @@ class Fiber {
         });
 
         router.post("/publish", (req, res, next) => {
-            this.emitter.emit('message', JSON.stringify(req.body));
-            return res.sendStatus(200);
+            let message = this.createMessageObject(req.body);
+            this.emitter.emit('message', message);
+
+            if (this.duplex) {
+                this.emitter.on(message.id, response => {
+                    this.emitter.removeAllListeners(message.id);
+                    res.json(response);
+                });
+            }
+            else {
+                return res.sendStatus(200);
+            }
         });
 
         router.ws("/subscribe", (ws, req) => {
             const eventHandler = message => {
-                ws.send(message);
+                ws.send(JSON.stringify(message));
             };
 
             this.emitter.on('message', eventHandler);
@@ -31,6 +43,16 @@ class Fiber {
             ws.on('close', () => {
                 this.emitter.removeListener('message', eventHandler);
             });
+
+            if (this.duplex) {
+                ws.on('message', (data) => {
+                    var json = JSON.parse(data);
+                    if (!json.id || !json.payload)
+                        return;
+                    
+                    this.emitter.emit(json.id, json.payload);
+                });
+            }
         });
     }
 
@@ -56,6 +78,13 @@ class Fiber {
         }
 
         return true;
+    }
+
+    createMessageObject(payload) {
+        return {
+            id: uuidv4(),
+            payload: payload
+        };
     }
 
 }

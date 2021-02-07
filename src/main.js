@@ -42,6 +42,11 @@ function deployFibers() {
 			return false;
 		}
 
+		if (fiberDef.mode !== 'simplex' && fiberDef.mode !== 'duplex') {
+			xa.error(fiberDef.name + ": Unknown fiber mode '" + fiberDef.mode + "'.");
+			return false;
+		}
+
 		deploy(fiberDef);
 	}
 	return true;
