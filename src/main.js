@@ -5,7 +5,6 @@ const config = require("../config/config.json");
 const fiberDefs = require("../config/fibers.json");
 
 const express = require("express");
-const bodyParser = require("body-parser");
 const expressWs = require("express-ws");
 const xa = require("xa");
 
@@ -15,15 +14,14 @@ const manager = new FiberManager();
 
 const app = express();
 app.set("trust proxy", 1);
-app.use(bodyParser.json());
+app.use(express.json());
 
 xa.info(appInfo.name + " v" + appInfo.version + " starting up...");
 
 expressWs(app);
-xa.info("Registered WebSocket handler");
 
 var server = app.listen(config.port, () => {
-	xa.info("HTTP Listener started on port " + config.port);
+	xa.info("Listener started on port " + config.port);
 
 	initialize();
 });

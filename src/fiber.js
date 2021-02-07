@@ -17,13 +17,19 @@ class Fiber {
         });
 
         router.post("/publish", (req, res, next) => {
-            this.emitter.emit('message', req.body);
+            this.emitter.emit('message', JSON.stringify(req.body));
             return res.sendStatus(200);
         });
 
         router.ws("/subscribe", (ws, req) => {
-            this.emitter.on('message', message => {
+            const eventHandler = message => {
                 ws.send(message);
+            };
+
+            this.emitter.on('message', eventHandler);
+
+            ws.on('close', () => {
+                this.emitter.removeListener('message', eventHandler);
             });
         });
     }
