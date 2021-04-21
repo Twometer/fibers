@@ -13,6 +13,9 @@ There are two modes for fibers: `simplex` and `duplex`. Simplex fibers just broa
  subscribers. Duplex fibers on the other hand wait for a response to be sent by a subscriber and return it in the HTTP response
  to the publisher.
 
+There also exists a JavaScript library for easier development of fiber clients. It is located in the `lib` folder and 
+ requires the `ws` npm package as a dependency.
+
 ## Endpoints
 - `/{fiber}/subscribe`: WebSocket endpoint for subscribing to messages in that fiber.
 - `/{fiber}/publish`: POST endpoint for publishing messages to that fiber.
