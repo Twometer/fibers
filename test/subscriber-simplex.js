@@ -1,19 +1,21 @@
-const WebSocket = require('ws');
+const FiberStream = require('../lib/fiber-stream');
 
-var socket = new WebSocket('ws://localhost:8090/test-fiber-s/subscribe', {
-    headers: {
-        Authorization: "X-FiberAuth cvhYgf4yhCWRL59z639x"
-    }
-});
+const stream = new FiberStream('ws://localhost:8090/test-fiber-s/subscribe', 'cvhYgf4yhCWRL59z639x', 'simplex');
 
-socket.on('open', () => {
+stream.on('open', () => {
     console.log("Connected");
 });
 
-socket.on('close', (e) => {
-    console.log("Connection lost", e);
+stream.on('error', e => {
+    console.log("Connection failed", e);
 });
 
-socket.on('message', (data) => {
-    console.log(data);
+stream.on('close', () => {
+    console.log("Connection lost");
 });
+
+stream.on('message', data => {
+    console.log("Received ", data);
+});
+
+stream.open();
