@@ -1,7 +1,7 @@
 'use strict';
 
 const events = require('events');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 
 class Fiber {
 
@@ -13,13 +13,13 @@ class Fiber {
 
     register(router) {
         router.use((req, res, next) => {
-            if (this.authenticateRequest(req, res)) {
+            if (this._authenticateRequest(req, res)) {
                 return next();
             }
         });
 
-        router.post("/publish", (req, res, next) => {
-            let message = this.createMessageObject(req.body);
+        router.post("/publish", (req, res) => {
+            let message = this._createMessageObject(req.body);
             this.emitter.emit('message', message);
 
             if (this.duplex) {
@@ -28,18 +28,16 @@ class Fiber {
                     res.sendStatus(504);
                 }, 30000);
 
-                this.emitter.on(message.id, response => {
-                    this.emitter.removeAllListeners(message.id);
+                this.emitter.once(message.id, response => {
                     clearTimeout(timeout);
                     res.json(response);
                 });
-            }
-            else {
+            } else {
                 return res.sendStatus(200);
             }
         });
 
-        router.ws("/subscribe", (ws, req) => {
+        router.ws("/subscribe", (ws) => {
             const eventHandler = message => {
                 ws.send(JSON.stringify(message));
             };
@@ -52,7 +50,7 @@ class Fiber {
 
             if (this.duplex) {
                 ws.on('message', (data) => {
-                    var json = JSON.parse(data);
+                    let json = JSON.parse(data);
                     if (!json.id || !json.payload)
                         return;
 
@@ -62,10 +60,10 @@ class Fiber {
         });
     }
 
-    authenticateRequest(req, res) {
+    _authenticateRequest(req, res) {
         let header = req.headers.authorization;
         if (header == null) {
-            res.sendStatus(401).send();
+            res.sendStatus(401);
             return false;
         }
 
@@ -74,19 +72,19 @@ class Fiber {
         let key = auth[1];
 
         if (scheme !== 'X-FiberAuth') {
-            res.sendStatus(403).send();
+            res.sendStatus(403);
             return false;
         }
 
         if (key !== this.spec.key) {
-            res.sendStatus(403).send();
+            res.sendStatus(403);
             return false;
         }
 
         return true;
     }
 
-    createMessageObject(payload) {
+    _createMessageObject(payload) {
         return {
             id: uuidv4(),
             payload: payload
@@ -95,4 +93,4 @@ class Fiber {
 
 }
 
-module.exports = { Fiber }
+module.exports = {Fiber}

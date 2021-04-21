@@ -11,7 +11,8 @@ Each fiber is completely independent from the others, and each one can have mult
 
 There are two modes for fibers: `simplex` and `duplex`. Simplex fibers just broadcast all published messages to all connected
  subscribers. Duplex fibers on the other hand wait for a response to be sent by a subscriber and return it in the HTTP response
- to the publisher.
+ to the publisher. Note that duplex fibers broadcast the messages to all subscribers, but only the response of the first responding
+ subscriber is returned to the publisher.
 
 There also exists a JavaScript library for easier development of fiber clients. It is located in the `lib` folder and 
  requires the `ws` npm package as a dependency.

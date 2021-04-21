@@ -8,7 +8,7 @@ class FiberManager {
 
     hasFiber(key) {
         for (let fiber of this.fibers) {
-            if (fiber.key == key)
+            if (fiber.key === key)
                 return true;
         }
         return false;
