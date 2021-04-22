@@ -1,66 +1,54 @@
 'use strict';
 
 const appInfo = require("../package.json");
-const Config = require("./config");
 const fiberDefs = require("../config/fibers.json");
 
-const express = require("express");
-const expressWs = require("express-ws");
-const xa = require("xa");
-
-const FiberManager = require('./fiber-manager');
+const express = require('express');
+const logger = require('xa');
+const Config = require("./config");
+const Webapp = require('./webapp')
+const FiberManager = require('./manager');
 const Fiber = require('./fiber');
-const manager = new FiberManager();
 
-const app = express();
-app.set("trust proxy", 1);
-app.use(express.json());
+async function main() {
+    logger.info(`Starting ${appInfo.name} v${appInfo.version}...`);
+    overwriteLogger()
+    Config.load();
+    await Webapp.listen(Config.HTTP_PORT);
+    deployFibers();
+}
 
-xa.info(appInfo.name + " v" + appInfo.version + " starting up...");
-
-expressWs(app);
-
-Config.load();
-
-const server = app.listen(Config.HTTP_PORT, () => {
-    xa.info("Listener started on port " + Config.HTTP_PORT);
-
-    initialize();
-});
-
-function initialize() {
-    xa.info("Deploying fibers...");
-    if (!deployFibers()) {
-        server.close();
-    } else {
-        xa.success("Startup complete.");
+function overwriteLogger() {
+    logger.success = (text) => {
+        logger.custom('OKAY', text, {backgroundColor: 'green'});
     }
 }
 
 function deployFibers() {
+    logger.info("Deploying fibers...");
     for (let fiberDef of fiberDefs) {
-        if (manager.hasFiber(fiberDef.name)) {
-            xa.error("Fiber '" + fiberDef.name + "' defined twice.");
-            return false;
+        if (FiberManager.hasFiber(fiberDef.name)) {
+            throw Error(`Fiber '${fiberDef.name}' defined twice.`);
         }
 
         if (fiberDef.mode !== 'simplex' && fiberDef.mode !== 'duplex') {
-            xa.error(fiberDef.name + ": Unknown fiber mode '" + fiberDef.mode + "'.");
-            return false;
+            throw Error(`${fiberDef.name}: Unknown fiber mode '${fiberDef.mode}'.`);
         }
 
-        deploy(fiberDef);
+        deployFiber(fiberDef);
     }
-    return true;
 }
 
-function deploy(fiberDef) {
+function deployFiber(fiberDef) {
     let router = express.Router();
 
     let fiber = new Fiber(fiberDef);
     fiber.register(router)
 
-    manager.add(fiber);
-    app.use('/' + fiberDef.name, router);
-    xa.success("Deployed fiber '" + fiberDef.name + "'.");
+    FiberManager.add(fiber);
+    Webapp.app.use('/' + fiberDef.name, router);
+    logger.success("Deployed fiber '" + fiberDef.name + "'.");
 }
+
+main().then(() => logger.success("Startup complete."))
+    .catch(e => logger.error(`Startup failed: ${e}.`))
