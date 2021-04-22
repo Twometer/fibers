@@ -21,4 +21,4 @@ class FiberManager {
 }
 
 
-module.exports = { FiberManager }
+module.exports = FiberManager

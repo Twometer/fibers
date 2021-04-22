@@ -93,4 +93,4 @@ class Fiber {
 
 }
 
-module.exports = {Fiber}
+module.exports = Fiber
