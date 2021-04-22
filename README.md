@@ -16,4 +16,4 @@ Fibers is a fast and simple message queue and relay server for JSON messages.
 
 ## Getting started
 
-To get started, check out the documentation [https://twometer.github.io/fibers](here)
+To get started, check out the documentation [here](https://twometer.github.io/fibers)
