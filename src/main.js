@@ -1,7 +1,7 @@
 'use strict';
 
 const appInfo = require("../package.json");
-const config = require("../config/config.json");
+const Config = require("./config");
 const fiberDefs = require("../config/fibers.json");
 
 const express = require("express");
@@ -20,8 +20,10 @@ xa.info(appInfo.name + " v" + appInfo.version + " starting up...");
 
 expressWs(app);
 
-const server = app.listen(config.port, () => {
-    xa.info("Listener started on port " + config.port);
+Config.load();
+
+const server = app.listen(Config.HTTP_PORT, () => {
+    xa.info("Listener started on port " + Config.HTTP_PORT);
 
     initialize();
 });
