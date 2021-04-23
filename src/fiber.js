@@ -2,7 +2,7 @@
 
 const Config = require('./config')
 const events = require('events')
-const logger = require('xa');
+const logger = require('cutelog.js');
 const {v4: uuidv4} = require('uuid')
 
 class Fiber {

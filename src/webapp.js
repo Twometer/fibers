@@ -2,7 +2,7 @@
 
 const express = require("express");
 const expressWs = require("express-ws");
-const logger = require('xa');
+const logger = require('cutelog.js');
 
 let app = express();
 let server = null;

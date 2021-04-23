@@ -4,7 +4,7 @@ const appInfo = require("../package.json");
 const fiberDefs = require("../config/fibers.json");
 
 const express = require('express');
-const logger = require('xa');
+const logger = require('cutelog.js');
 const Config = require("./config");
 const Webapp = require('./webapp')
 const FiberManager = require('./manager');
@@ -12,16 +12,9 @@ const Fiber = require('./fiber');
 
 async function main() {
     logger.info(`Starting ${appInfo.name} v${appInfo.version}...`);
-    overwriteLogger()
     Config.load();
     await Webapp.listen(Config.HTTP_PORT);
     deployFibers();
-}
-
-function overwriteLogger() {
-    logger.success = (text) => {
-        logger.custom('OKAY', text, {backgroundColor: 'green'});
-    }
 }
 
 function deployFibers() {
@@ -47,8 +40,8 @@ function deployFiber(fiberDef) {
 
     FiberManager.add(fiber);
     Webapp.use('/' + fiberDef.name, router);
-    logger.success("Deployed fiber '" + fiberDef.name + "'.");
+    logger.okay("Deployed fiber '" + fiberDef.name + "'.");
 }
 
-main().then(() => logger.success("Startup complete."))
+main().then(() => logger.okay("Startup complete."))
     .catch(e => logger.error(`Startup failed: ${e}.`))
