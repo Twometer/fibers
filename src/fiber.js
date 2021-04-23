@@ -1,32 +1,35 @@
 'use strict';
 
-const events = require('events');
-const {v4: uuidv4} = require('uuid');
+const Config = require('./config')
+const events = require('events')
+const {v4: uuidv4} = require('uuid')
 
 class Fiber {
 
     constructor(spec) {
         this.spec = spec;
         this.emitter = new events.EventEmitter();
-        this.duplex = spec.mode === "duplex";
+        this.subscribers = [];
+        this.relayMode = spec.mode === 'relay';
     }
 
     register(router) {
         router.use((req, res, next) => {
+            console.log("authenticating");
             if (this._authenticateRequest(req, res)) {
                 return next();
             }
         });
 
-        router.post("/publish", (req, res) => {
+        router.post("/push", (req, res) => {
             let message = this._createMessageObject(req.body);
             this.emitter.emit('message', message);
 
-            if (this.duplex) {
+            if (this.relayMode) {
                 const timeout = setTimeout(() => {
                     this.emitter.removeAllListeners(message.id);
                     res.sendStatus(504);
-                }, 30000);
+                }, Config.MSG_TIMEOUT);
 
                 this.emitter.once(message.id, response => {
                     clearTimeout(timeout);
@@ -37,7 +40,8 @@ class Fiber {
             }
         });
 
-        router.ws("/subscribe", (ws) => {
+        router.ws("/stream", ws => {
+            console.log("stream connected");
             const eventHandler = message => {
                 ws.send(JSON.stringify(message));
             };
@@ -48,15 +52,23 @@ class Fiber {
                 this.emitter.removeListener('message', eventHandler);
             });
 
-            if (this.duplex) {
-                ws.on('message', (data) => {
+            ws.on('message', (data) => {
+                try {
                     let json = JSON.parse(data);
                     if (!json.id || !json.payload)
                         return;
 
-                    this.emitter.emit(json.id, json.payload);
-                });
-            }
+                    if (this.relayMode && json.type === 'response') {
+                        this.emitter.emit(json.id, json.payload);
+                    } else if (!this.relayMode && json.type === 'publish') {
+                        this.emitter.emit('message', {id: json.id, payload: json.payload});
+                    } else if (json.type === 'pong') {
+
+                    }
+                } catch (e) {
+
+                }
+            });
         });
     }
 

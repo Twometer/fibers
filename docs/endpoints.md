@@ -8,8 +8,8 @@ For each fiber, the server generates an endpoint that supports POST requests and
 format:
 
 ```
-http://fiber-server:port/fiber-name/
-  ws://fiber-server:port/fiber-name/
+http://fiber-server:port/fiber-name/push
+  ws://fiber-server:port/fiber-name/stream
 ```
 
 All requests made to such endpoints require an Authorization header with the `X-FiberAuth` scheme, supplying the access

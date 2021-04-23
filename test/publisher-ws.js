@@ -1,6 +1,11 @@
 const FiberStream = require('../lib/fiber-stream');
 
-const stream = new FiberStream('ws://localhost:8090/test-fiber-s/subscribe', 'cvhYgf4yhCWRL59z639x', 'simplex');
+const stream = new FiberStream('ws://localhost:8090/test-queue/stream', 'root', 'queue');
+
+let num = 0;
+setTimeout(() => {
+    stream.publish({num: num++})
+}, 1000);
 
 stream.on('open', () => {
     console.log("Connected");
@@ -12,10 +17,6 @@ stream.on('error', e => {
 
 stream.on('close', () => {
     console.log("Connection lost");
-});
-
-stream.on('message', data => {
-    console.log("Received ", data);
 });
 
 stream.open();

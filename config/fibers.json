@@ -1,12 +1,12 @@
 [
     {
-        "mode": "simplex",
-        "name": "test-fiber-s",
-        "key": "cvhYgf4yhCWRL59z639x"
+        "mode": "queue",
+        "name": "queue-test",
+        "key": "root"
     },
     {
-        "mode": "duplex",
-        "name": "test-fiber-d",
-        "key": "cvhYgf4yhCWRL59z639x"
+        "mode": "relay",
+        "name": "relay-test",
+        "key": "root"
     }
 ]

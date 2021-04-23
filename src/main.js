@@ -31,7 +31,7 @@ function deployFibers() {
             throw Error(`Fiber '${fiberDef.name}' defined twice.`);
         }
 
-        if (fiberDef.mode !== 'simplex' && fiberDef.mode !== 'duplex') {
+        if (fiberDef.mode !== 'relay' && fiberDef.mode !== 'queue') {
             throw Error(`${fiberDef.name}: Unknown fiber mode '${fiberDef.mode}'.`);
         }
 
@@ -46,7 +46,7 @@ function deployFiber(fiberDef) {
     fiber.register(router)
 
     FiberManager.add(fiber);
-    Webapp.app.use('/' + fiberDef.name, router);
+    Webapp.use('/' + fiberDef.name, router);
     logger.success("Deployed fiber '" + fiberDef.name + "'.");
 }
 

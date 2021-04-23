@@ -4,7 +4,7 @@ const ENV_PREFIX = 'FIBER_';
 
 const Config = {
     HTTP_PORT: 0,
-    MESSAGE_TIMEOUT: 0
+    MSG_TIMEOUT: 0
 };
 
 function parseValue(string, type) {

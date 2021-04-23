@@ -1,6 +1,6 @@
 const FiberStream = require('../lib/fiber-stream');
 
-const stream = new FiberStream('ws://localhost:8090/test-fiber-d/subscribe', 'cvhYgf4yhCWRL59z639x', 'duplex');
+const stream = new FiberStream('ws://localhost:8090/test-relay/stream', 'root', 'relay');
 
 stream.on('open', () => {
     console.log("Connected");
