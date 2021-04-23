@@ -13,7 +13,7 @@ To publish a message, just send a POST request to the fiber's `publish` endpoint
 message payload. Simplex Fibers will return a `200` response on success, duplex fibers will return the subscriber's
 reply in the HTTP response.
 
-When connected to the WebSocket endpoint of a fiber operating in queue mode (This does **not** work with relay-mode
+When connected to the WebSocket endpoint of a fiber operating in bus mode (This does **not** work with relay-mode
 fibers), you can directly publish messages using the WebSocket, by sending the message in the following format:
 
 ```json

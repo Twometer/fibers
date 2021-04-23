@@ -2,10 +2,10 @@
 
 A single fiber can be configured to operate in one of these two modes:
 
-## Queue Mode
+## Bus Mode
 
-Queue mode is for messages that only require a simple message bus, to which anyone can publish messages that are
-forwarded to everyone who is subscribed to the bus. A client subscribes to a queue-mode fiber using the WebSocket
+Bus mode is for messages that only require a simple message bus, to which anyone can publish messages that are
+forwarded to everyone who is subscribed to the bus. A client subscribes to a bus-mode fiber using the WebSocket
 endpoint.
 
 Messages can be published either by sending it to the WebSocket or by POSTing it to the HTTP endpoint.

@@ -31,7 +31,7 @@ function deployFibers() {
             throw Error(`Fiber '${fiberDef.name}' defined twice.`);
         }
 
-        if (fiberDef.mode !== 'relay' && fiberDef.mode !== 'queue') {
+        if (fiberDef.mode !== 'relay' && fiberDef.mode !== 'bus') {
             throw Error(`${fiberDef.name}: Unknown fiber mode '${fiberDef.mode}'.`);
         }
 

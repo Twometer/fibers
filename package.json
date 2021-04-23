@@ -1,7 +1,7 @@
 {
   "name": "fibers",
   "version": "1.0.0",
-  "description": "Fast and simple message queue and relay server",
+  "description": "Fast and simple message bus and relay server",
   "main": "src/main.js",
   "directories": {
     "doc": "docs"

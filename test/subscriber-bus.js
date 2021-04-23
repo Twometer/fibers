@@ -1,6 +1,6 @@
 const FiberStream = require('../lib/fiber-stream');
 
-const stream = new FiberStream('ws://localhost:8090/queue-test/stream', 'root', 'queue');
+const stream = new FiberStream('ws://localhost:8090/bus-test/stream', 'root', 'bus');
 
 stream.on('open', () => {
     console.log("Connected");

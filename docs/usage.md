@@ -21,7 +21,7 @@ Fibers are defined in the `/app/config/fibers.json` file that you mounted previo
 ```json
 [
   {
-    "mode": "queue|relay",
+    "mode": "bus|relay",
     "name": "fiber-name",
     "key": "choose a secure key"
   }

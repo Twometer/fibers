@@ -1,6 +1,6 @@
 # ⚡ Fibers
 
-Fibers is a fast and simple message queue and relay server for JSON messages.
+Fibers is a fast and simple message bus and relay server for JSON messages.
 
 ## Repository layout
 

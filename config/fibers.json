@@ -1,7 +1,7 @@
 [
     {
-        "mode": "queue",
-        "name": "queue-test",
+        "mode": "bus",
+        "name": "bus-test",
         "key": "root"
     },
     {
