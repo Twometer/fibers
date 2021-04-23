@@ -1,12 +1,31 @@
-## Endpoints
+# Endpoints
 
-- `/{fiber}/subscribe`: WebSocket endpoint for subscribing to messages in that fiber.
-- `/{fiber}/publish`: POST endpoint for publishing messages to that fiber.
+This page describes which endpoints and protocols the Fibers server exposes
 
-All requests require an Authorization header with the `X-FiberAuth` scheme, which supplies
-the key for that fiber.
+## Format
 
-Fibers that do not exist will yield a 404 error. Invalid keys will return 403 and a missing key 401.
+For each fiber, the server generates an endpoint that supports POST requests and WebSocket connections, in the following
+format:
 
-If a duplex fiber subscriber does not reply within 30 seconds, the message is treated as lost and will return error `504` to the
- publisher.
+```
+http://fiber-server:port/fiber-name/push
+  ws://fiber-server:port/fiber-name/stream
+```
+
+All requests made to such endpoints require an Authorization header with the `X-FiberAuth` scheme, supplying the access
+key for that fiber, like this:
+
+```
+Authorization: X-FiberAuth key
+```
+
+## Errors
+
+The following HTTP errors can occur when connecting to any such endpoint:
+
+Error Code   | Description
+------------ | -------------
+404 Not Found | The requested fiber does not exist
+403 Access Denied | The supplied access key is not valid for this fiber
+401 Unauthorized | The request is missing an access key
+504 Gateway Timeout | No subscriber replied to the relay before the timeout

@@ -1,7 +1,7 @@
 {
   "name": "fibers",
-  "version": "0.2.0",
-  "description": "Fast and simple message queue and relay server",
+  "version": "1.0.0",
+  "description": "Fast and simple message bus and relay server",
   "main": "src/main.js",
   "directories": {
     "doc": "docs"
@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "uuid": "^8.3.2",
+    "ws": "^7.4.5",
     "xa": "^2.4.0"
   }
 }

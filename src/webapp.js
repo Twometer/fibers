@@ -5,14 +5,14 @@ const expressWs = require("express-ws");
 const logger = require('xa');
 
 let app = express();
-let server;
+let server = null;
 
 function listen(port) {
-    return new Promise((resolve) => {
-        app.set("trust proxy", 1);
-        app.use(express.json());
-        expressWs(app);
+    app.set("trust proxy", 1);
+    app.use(express.json());
+    expressWs(app);
 
+    return new Promise((resolve) => {
         server = app.listen(port, () => {
             logger.info(`Listener started on port ${port}`);
             resolve();
@@ -20,8 +20,14 @@ function listen(port) {
     })
 }
 
-function close() {
-    server.close();
+function use(endpoint, router) {
+    app.use(endpoint, router);
 }
 
-module.exports = {app, listen, close}
+function close() {
+    if (server !== null) {
+        server.close();
+    }
+}
+
+module.exports = {listen, close, use}

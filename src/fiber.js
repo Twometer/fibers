@@ -1,14 +1,16 @@
 'use strict';
 
-const events = require('events');
-const {v4: uuidv4} = require('uuid');
+const Config = require('./config')
+const events = require('events')
+const logger = require('xa');
+const {v4: uuidv4} = require('uuid')
 
 class Fiber {
 
     constructor(spec) {
         this.spec = spec;
-        this.emitter = new events.EventEmitter();
-        this.duplex = spec.mode === "duplex";
+        this.eventBus = new events.EventEmitter();
+        this.relayMode = spec.mode === 'relay';
     }
 
     register(router) {
@@ -18,46 +20,69 @@ class Fiber {
             }
         });
 
-        router.post("/publish", (req, res) => {
-            let message = this._createMessageObject(req.body);
-            this.emitter.emit('message', message);
+        router.post("/push", (req, res) => {
+            let message = this._createMessage(uuidv4(), 'publish', 'http', req.body);
+            this.eventBus.emit('message', message);
 
-            if (this.duplex) {
+            if (this.relayMode) {
+                // When in relay mode, wait for a subscriber to respond
                 const timeout = setTimeout(() => {
-                    this.emitter.removeAllListeners(message.id);
+                    this.eventBus.removeAllListeners(message.id);
                     res.sendStatus(504);
-                }, 30000);
+                }, Config.MSG_TIMEOUT);
 
-                this.emitter.once(message.id, response => {
+                this.eventBus.once(message.id, response => {
                     clearTimeout(timeout);
                     res.json(response);
                 });
             } else {
+                // Else just acknowledge that we got the message
                 return res.sendStatus(200);
             }
         });
 
-        router.ws("/subscribe", (ws) => {
-            const eventHandler = message => {
-                ws.send(JSON.stringify(message));
+        router.ws("/stream", ws => {
+            const clientId = uuidv4();
+
+            // Send messages from publishers to this socket
+            const messageEventHandler = message => {
+                if (message.sender !== clientId) {
+                    ws.send(JSON.stringify({id: message.id, type: message.type, payload: message.payload}));
+                }
             };
+            this.eventBus.on('message', messageEventHandler);
 
-            this.emitter.on('message', eventHandler);
-
-            ws.on('close', () => {
-                this.emitter.removeListener('message', eventHandler);
-            });
-
-            if (this.duplex) {
-                ws.on('message', (data) => {
+            // Allow this socket to publish / respond to messages
+            ws.on('message', (data) => {
+                try {
                     let json = JSON.parse(data);
-                    if (!json.id || !json.payload)
+                    if (!json.id || !json.payload || !json.type)
                         return;
 
-                    this.emitter.emit(json.id, json.payload);
-                });
-            }
+                    if (this.relayMode && json.type === 'response') {
+                        this.eventBus.emit(json.id, json.payload);
+                    } else if (!this.relayMode && json.type === 'publish') {
+                        this.eventBus.emit('message', this._createMessage(json.id, json.type, clientId, json.payload));
+                    }
+                } catch (e) {
+                    logger.error(e);
+                }
+            });
+
+            // Handle disconnects
+            ws.on('close', () => {
+                this.eventBus.removeListener('message', messageEventHandler);
+            });
         });
+
+
+        setInterval(() => {
+            this.eventBus.emit('message', this._createMessage(uuidv4(), 'ping', 'server'));
+        }, Config.KEEPALIVE_INTERVAL);
+    }
+
+    _createMessage(id, type, sender, payload) {
+        return {id, type, sender, payload}
     }
 
     _authenticateRequest(req, res) {
@@ -82,13 +107,6 @@ class Fiber {
         }
 
         return true;
-    }
-
-    _createMessageObject(payload) {
-        return {
-            id: uuidv4(),
-            payload: payload
-        };
     }
 
 }

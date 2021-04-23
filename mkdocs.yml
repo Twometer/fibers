@@ -1,3 +1,5 @@
 site_name: Fibers
+extra_css:
+    -  css/extra.css
 theme:
-    name: readthedocs
+    name: material
