@@ -21,10 +21,11 @@ class Fiber {
         });
 
         router.post("/push", (req, res) => {
-            let message = {id: uuidv4(), sender: 'http', payload: req.body};
+            let message = this._createMessage(uuidv4(), 'publish', 'http', req.body);
             this.eventBus.emit('message', message);
 
             if (this.relayMode) {
+                // When in relay mode, wait for a subscriber to respond
                 const timeout = setTimeout(() => {
                     this.eventBus.removeAllListeners(message.id);
                     res.sendStatus(504);
@@ -35,6 +36,7 @@ class Fiber {
                     res.json(response);
                 });
             } else {
+                // Else just acknowledge that we got the message
                 return res.sendStatus(200);
             }
         });
@@ -42,38 +44,45 @@ class Fiber {
         router.ws("/stream", ws => {
             const clientId = uuidv4();
 
+            // Send messages from publishers to this socket
             const messageEventHandler = message => {
                 if (message.sender !== clientId) {
-                    ws.send(JSON.stringify({id: message.id, payload: message.payload}));
+                    ws.send(JSON.stringify({id: message.id, type: message.type, payload: message.payload}));
                 }
             };
             this.eventBus.on('message', messageEventHandler);
 
-            ws.on('close', () => {
-                this.eventBus.removeListener('message', messageEventHandler);
-            });
-
+            // Allow this socket to publish / respond to messages
             ws.on('message', (data) => {
                 try {
                     let json = JSON.parse(data);
-                    if (!json.id || !json.payload)
+                    if (!json.id || !json.payload || !json.type)
                         return;
 
                     if (this.relayMode && json.type === 'response') {
                         this.eventBus.emit(json.id, json.payload);
                     } else if (!this.relayMode && json.type === 'publish') {
-                        this.eventBus.emit('message', {id: json.id, sender: clientId, payload: json.payload});
+                        this.eventBus.emit('message', this._createMessage(json.id, json.type, clientId, json.payload));
                     }
                 } catch (e) {
                     logger.error(e);
                 }
             });
+
+            // Handle disconnects
+            ws.on('close', () => {
+                this.eventBus.removeListener('message', messageEventHandler);
+            });
         });
 
 
         setInterval(() => {
-            this.eventBus.emit('message', {id: uuidv4(), type: 'ping', sender: 'server'})
+            this.eventBus.emit('message', this._createMessage(uuidv4(), 'ping', 'server'));
         }, Config.KEEPALIVE_INTERVAL);
+    }
+
+    _createMessage(id, type, sender, payload) {
+        return {id, type, sender, payload}
     }
 
     _authenticateRequest(req, res) {

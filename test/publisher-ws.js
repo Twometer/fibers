@@ -3,7 +3,7 @@ const FiberStream = require('../lib/fiber-stream');
 const stream = new FiberStream('ws://localhost:8090/queue-test/stream', 'root', 'queue');
 
 let num = 0;
-setTimeout(() => {
+setInterval(() => {
     stream.publish({num: num++})
 }, 1000);
 
