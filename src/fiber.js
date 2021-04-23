@@ -2,36 +2,35 @@
 
 const Config = require('./config')
 const events = require('events')
+const logger = require('xa');
 const {v4: uuidv4} = require('uuid')
 
 class Fiber {
 
     constructor(spec) {
         this.spec = spec;
-        this.emitter = new events.EventEmitter();
-        this.subscribers = [];
+        this.eventBus = new events.EventEmitter();
         this.relayMode = spec.mode === 'relay';
     }
 
     register(router) {
         router.use((req, res, next) => {
-            console.log("authenticating");
             if (this._authenticateRequest(req, res)) {
                 return next();
             }
         });
 
         router.post("/push", (req, res) => {
-            let message = this._createMessageObject(req.body);
-            this.emitter.emit('message', message);
+            let message = {id: uuidv4(), sender: 'http', payload: req.body};
+            this.eventBus.emit('message', message);
 
             if (this.relayMode) {
                 const timeout = setTimeout(() => {
-                    this.emitter.removeAllListeners(message.id);
+                    this.eventBus.removeAllListeners(message.id);
                     res.sendStatus(504);
                 }, Config.MSG_TIMEOUT);
 
-                this.emitter.once(message.id, response => {
+                this.eventBus.once(message.id, response => {
                     clearTimeout(timeout);
                     res.json(response);
                 });
@@ -41,15 +40,17 @@ class Fiber {
         });
 
         router.ws("/stream", ws => {
-            console.log("stream connected");
-            const eventHandler = message => {
-                ws.send(JSON.stringify(message));
-            };
+            const clientId = uuidv4();
 
-            this.emitter.on('message', eventHandler);
+            const messageEventHandler = message => {
+                if (message.sender !== clientId) {
+                    ws.send(JSON.stringify({id: message.id, payload: message.payload}));
+                }
+            };
+            this.eventBus.on('message', messageEventHandler);
 
             ws.on('close', () => {
-                this.emitter.removeListener('message', eventHandler);
+                this.eventBus.removeListener('message', messageEventHandler);
             });
 
             ws.on('message', (data) => {
@@ -59,17 +60,16 @@ class Fiber {
                         return;
 
                     if (this.relayMode && json.type === 'response') {
-                        this.emitter.emit(json.id, json.payload);
+                        this.eventBus.emit(json.id, json.payload);
                     } else if (!this.relayMode && json.type === 'publish') {
-                        this.emitter.emit('message', {id: json.id, payload: json.payload});
-                    } else if (json.type === 'pong') {
-
+                        this.eventBus.emit('message', {id: json.id, sender: clientId, payload: json.payload});
                     }
                 } catch (e) {
-
+                    logger.error(e);
                 }
             });
         });
+
     }
 
     _authenticateRequest(req, res) {
@@ -94,13 +94,6 @@ class Fiber {
         }
 
         return true;
-    }
-
-    _createMessageObject(payload) {
-        return {
-            id: uuidv4(),
-            payload: payload
-        };
     }
 
 }
