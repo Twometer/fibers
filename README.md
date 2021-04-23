@@ -1,4 +1,4 @@
-# Fibers
+# ⚡ Fibers
 
 Fibers is a fast and simple message queue and relay server for JSON messages.
 
@@ -6,9 +6,11 @@ Fibers is a fast and simple message queue and relay server for JSON messages.
 
 `config`: Example configuration for a fibers server
 
-`lib`: JavaScript library for easier development of clients
+`lib`: JavaScript library for simple development of clients
 
-`src`: Fiber Server Source Code
+`docs`: Markdown documentation sources
+
+`src`: Fiber Server source code
 
 `test`: Example subscriber code for integration testing
 
