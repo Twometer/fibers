@@ -13,7 +13,7 @@ const Fiber = require('./fiber');
 async function main() {
     logger.info(`Starting ${appInfo.name} v${appInfo.version}...`);
     Config.load();
-    await Webapp.listen(Config.HTTP_PORT);
+    await Webapp.listen(Config.WEB_PORT);
     deployFibers();
 }
 

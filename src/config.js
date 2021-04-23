@@ -3,7 +3,7 @@
 const ENV_PREFIX = 'FIBER_';
 
 const Config = {
-    HTTP_PORT: 0,
+    WEB_PORT: 0,
     MSG_TIMEOUT: 0,
     KEEPALIVE_INTERVAL: 0
 };
