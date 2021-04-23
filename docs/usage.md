@@ -36,5 +36,8 @@ Key | Description
 ------------ | -------------
 FIBER_WEB_PORT | The port on which the HTTP and WebSocket server should listen
 FIBER_MSG_TIMEOUT | Timeout after which relay messages are dropped. See [here](../operating_modes) for more info.
+KEEPALIVE_INTERVAL | Interval in which keepalive (ping) messages are sent to subscribers.
+
+> **Note**: All time values must be given in milliseconds
 
 <br>

@@ -70,6 +70,10 @@ class Fiber {
             });
         });
 
+
+        setInterval(() => {
+            this.eventBus.emit('message', {id: uuidv4(), type: 'ping', sender: 'server'})
+        }, Config.KEEPALIVE_INTERVAL);
     }
 
     _authenticateRequest(req, res) {
