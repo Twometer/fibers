@@ -14,7 +14,7 @@
     
     
       
-        <title>Messages - Fibers</title>
+        <title>Usage - Fibers</title>
       
     
     
@@ -59,7 +59,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#messages" class="md-skip">
+        <a href="#usage" class="md-skip">
           Skip to content
         </a>
       
@@ -89,7 +89,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Messages
+              Usage
             
           </span>
         </div>
@@ -185,83 +185,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Messages
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="./" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../messages/" class="md-nav__link">
       Messages
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#publishing" class="md-nav__link">
-    Publishing
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#subscribing" class="md-nav__link">
-    Subscribing
-  </a>
-  
-    <nav class="md-nav" aria-label="Subscribing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#message-format" class="md-nav__link">
-    Message format
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#replying-on-relay-fibers" class="md-nav__link">
-    Replying on relay fibers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-keepalives" class="md-nav__link">
-    Handling keepalives
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -281,11 +209,76 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../usage/" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Usage
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
       Usage
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fiber-definition" class="md-nav__link">
+    Fiber definition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-config" class="md-nav__link">
+    Server config
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -313,37 +306,30 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#publishing" class="md-nav__link">
-    Publishing
+  <a href="#setup" class="md-nav__link">
+    Setup
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#subscribing" class="md-nav__link">
-    Subscribing
+  <a href="#configuration" class="md-nav__link">
+    Configuration
   </a>
   
-    <nav class="md-nav" aria-label="Subscribing">
+    <nav class="md-nav" aria-label="Configuration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#message-format" class="md-nav__link">
-    Message format
+  <a href="#fiber-definition" class="md-nav__link">
+    Fiber definition
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#replying-on-relay-fibers" class="md-nav__link">
-    Replying on relay fibers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-keepalives" class="md-nav__link">
-    Handling keepalives
+  <a href="#server-config" class="md-nav__link">
+    Server config
   </a>
   
 </li>
@@ -366,54 +352,53 @@
               
                 
                 
-                <h1 id="messages">Messages</h1>
-<p>The system is designed to work with JSON messages, binary data does not work directly and must be encoded to Base64
-before sending the message.</p>
-<h2 id="publishing">Publishing</h2>
-<p>You can always publish messages to a fiber by sending a <code>POST</code> request to its endpoint. The body can directly contain
-your message's content. If the <code>POST</code> request was made to a fiber operating in relay mode, the response payload of the
-subscriber is directly returned in the HTTP response.</p>
-<p>To publish a message, just send a POST request to the fiber's <code>publish</code> endpoint with the POST body containing your
-message payload. Simplex Fibers will return a <code>200</code> response on success, duplex fibers will return the subscriber's
-reply in the HTTP response.</p>
-<p>When connected to the WebSocket endpoint of a fiber operating in bus mode (This does <strong>not</strong> work with relay-mode
-fibers), you can directly publish messages using the WebSocket, by sending the message in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;publish&quot;,
-  &quot;payload&quot;: {}
-}
+                <h1 id="usage">Usage</h1>
+<p>The Fibers server is designed to be run using docker. It runs on the official <code>node</code> base image.</p>
+<h2 id="setup">Setup</h2>
+<p>No external dependencies are required to run it. However, you will want to mount the <code>/app/config</code> directory to change
+and persist the configuration files.</p>
+<p>For security reasons, it is also strongly recommended running the server behind a NGINX reverse proxy with TLS
+encryption enabled on the WebSocket and HTTP endpoints.</p>
+<h2 id="configuration">Configuration</h2>
+<p>There are two configurations for the Fibers server:</p>
+<h3 id="fiber-definition">Fiber definition</h3>
+<p>Fibers are defined in the <code>/app/config/fibers.json</code> file that you mounted previously, which has the following structure:</p>
+<pre><code class="language-json">[
+  {
+    &quot;mode&quot;: &quot;bus|relay&quot;,
+    &quot;name&quot;: &quot;fiber-name&quot;,
+    &quot;key&quot;: &quot;choose a secure key&quot;
+  }
+]
 </code></pre>
-<p>The payload can be any JSON object you want to send.</p>
-<h2 id="subscribing">Subscribing</h2>
-<p>Subscribing to a fiber can be a little more complex, depending on the fiber type:</p>
-<h3 id="message-format">Message format</h3>
-<p>Subscribers receive messages from publishers in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;publish&quot;,
-  &quot;payload&quot;: {}
-}
-</code></pre>
-<h3 id="replying-on-relay-fibers">Replying on relay fibers</h3>
-<p>When subscribing to a relay fiber, such a message should be replied to on the WebSocket with a message in the following
-format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;request uuid&gt;&quot;,
-  &quot;type&quot;: &quot;response&quot;,
-  &quot;payload&quot;: {}
-}
-</code></pre>
-<p>The payload object will be returned to the publisher.</p>
-<h3 id="handling-keepalives">Handling keepalives</h3>
-<p>The fiber server will regularly check in on the fiber subscribers in order to detect broken connections and keeping
-working connections alive. The server will send requests in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;ping&quot;
-}
-</code></pre>
-<p>Note the missing payload. A compliant subscriber should reply with type <code>pong</code> and the same message id as the request.</p>
+<h3 id="server-config">Server config</h3>
+<p>The server is configured using environment variables that you can pass to your Docker container:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FIBER_WEB_PORT</td>
+<td>The port on which the HTTP and WebSocket server should listen</td>
+</tr>
+<tr>
+<td>FIBER_MSG_TIMEOUT</td>
+<td>Timeout after which relay messages are dropped. See <a href="../operating_modes">here</a> for more info.</td>
+</tr>
+<tr>
+<td>KEEPALIVE_INTERVAL</td>
+<td>Interval in which keepalive (ping) messages are sent to subscribers.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: All time values must be given in milliseconds</p>
+</blockquote>
+<p><br></p>
                 
               
               
@@ -432,7 +417,7 @@ working connections alive. The server will send requests in the following format
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../endpoints/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../operating_modes/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -441,25 +426,11 @@ working connections alive. The server will send requests in the following format
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Endpoints
-              </div>
-            </div>
-          </a>
-        
-        
-          <a href="../operating_modes/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-footer-nav__title">
-              <div class="md-ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
                 Operating modes
               </div>
             </div>
-            <div class="md-footer-nav__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-            </div>
           </a>
+        
         
       </nav>
     </div>

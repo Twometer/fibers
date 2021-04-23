@@ -14,7 +14,7 @@
     
     
       
-        <title>Messages - Fibers</title>
+        <title>Operating modes - Fibers</title>
       
     
     
@@ -59,7 +59,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#messages" class="md-skip">
+        <a href="#operating-modes" class="md-skip">
           Skip to content
         </a>
       
@@ -89,7 +89,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Messages
+              Operating modes
             
           </span>
         </div>
@@ -185,6 +185,18 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href="../messages/" class="md-nav__link">
+      Messages
+    </a>
+  </li>
+
+    
+      
+      
+      
+
   
 
 
@@ -196,12 +208,12 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Messages
+        Operating modes
         <span class="md-nav__icon md-icon"></span>
       </label>
     
     <a href="./" class="md-nav__link md-nav__link--active">
-      Messages
+      Operating modes
     </a>
     
       
@@ -218,43 +230,16 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#publishing" class="md-nav__link">
-    Publishing
+  <a href="#bus-mode" class="md-nav__link">
+    Bus Mode
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#subscribing" class="md-nav__link">
-    Subscribing
+  <a href="#relay-mode" class="md-nav__link">
+    Relay Mode
   </a>
-  
-    <nav class="md-nav" aria-label="Subscribing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#message-format" class="md-nav__link">
-    Message format
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#replying-on-relay-fibers" class="md-nav__link">
-    Replying on relay fibers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-keepalives" class="md-nav__link">
-    Handling keepalives
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -262,18 +247,6 @@
   
 </nav>
     
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../operating_modes/" class="md-nav__link">
-      Operating modes
-    </a>
   </li>
 
     
@@ -313,43 +286,16 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#publishing" class="md-nav__link">
-    Publishing
+  <a href="#bus-mode" class="md-nav__link">
+    Bus Mode
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#subscribing" class="md-nav__link">
-    Subscribing
+  <a href="#relay-mode" class="md-nav__link">
+    Relay Mode
   </a>
-  
-    <nav class="md-nav" aria-label="Subscribing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#message-format" class="md-nav__link">
-    Message format
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#replying-on-relay-fibers" class="md-nav__link">
-    Replying on relay fibers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-keepalives" class="md-nav__link">
-    Handling keepalives
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -366,54 +312,22 @@
               
                 
                 
-                <h1 id="messages">Messages</h1>
-<p>The system is designed to work with JSON messages, binary data does not work directly and must be encoded to Base64
-before sending the message.</p>
-<h2 id="publishing">Publishing</h2>
-<p>You can always publish messages to a fiber by sending a <code>POST</code> request to its endpoint. The body can directly contain
-your message's content. If the <code>POST</code> request was made to a fiber operating in relay mode, the response payload of the
-subscriber is directly returned in the HTTP response.</p>
-<p>To publish a message, just send a POST request to the fiber's <code>publish</code> endpoint with the POST body containing your
-message payload. Simplex Fibers will return a <code>200</code> response on success, duplex fibers will return the subscriber's
-reply in the HTTP response.</p>
-<p>When connected to the WebSocket endpoint of a fiber operating in bus mode (This does <strong>not</strong> work with relay-mode
-fibers), you can directly publish messages using the WebSocket, by sending the message in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;publish&quot;,
-  &quot;payload&quot;: {}
-}
-</code></pre>
-<p>The payload can be any JSON object you want to send.</p>
-<h2 id="subscribing">Subscribing</h2>
-<p>Subscribing to a fiber can be a little more complex, depending on the fiber type:</p>
-<h3 id="message-format">Message format</h3>
-<p>Subscribers receive messages from publishers in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;publish&quot;,
-  &quot;payload&quot;: {}
-}
-</code></pre>
-<h3 id="replying-on-relay-fibers">Replying on relay fibers</h3>
-<p>When subscribing to a relay fiber, such a message should be replied to on the WebSocket with a message in the following
-format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;request uuid&gt;&quot;,
-  &quot;type&quot;: &quot;response&quot;,
-  &quot;payload&quot;: {}
-}
-</code></pre>
-<p>The payload object will be returned to the publisher.</p>
-<h3 id="handling-keepalives">Handling keepalives</h3>
-<p>The fiber server will regularly check in on the fiber subscribers in order to detect broken connections and keeping
-working connections alive. The server will send requests in the following format:</p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;&lt;random uuid&gt;&quot;,
-  &quot;type&quot;: &quot;ping&quot;
-}
-</code></pre>
-<p>Note the missing payload. A compliant subscriber should reply with type <code>pong</code> and the same message id as the request.</p>
+                <h1 id="operating-modes">Operating modes</h1>
+<p>A single fiber can be configured to operate in one of these two modes:</p>
+<h2 id="bus-mode">Bus Mode</h2>
+<p>Bus mode is for messages that only require a simple message bus, to which anyone can publish messages that are
+forwarded to everyone who is subscribed to the bus. A client subscribes to a bus-mode fiber using the WebSocket
+endpoint.</p>
+<p>Messages can be published either by sending it to the WebSocket or by POSTing it to the HTTP endpoint.</p>
+<h2 id="relay-mode">Relay Mode</h2>
+<p>The relay mode is for messages that each require a response from one of the subscribers. When you publish a message to a
+relay-mode fiber, the server broadcasts it to all subscribers. It then waits for any one of the subscribers to return a
+response with the same message ID.</p>
+<p>The first subscriber that responds gets its response message returned back to the publisher. Messages that are not
+answered by any subscriber after a configurable timeout are dropped and the publisher receives a <code>504 Gateway Timeout</code>
+response.</p>
+<p>Note that relay mode does not support publishing by WebSocket. Only the POST-endpoint can be used for publishing
+messages.</p>
                 
               
               
@@ -432,7 +346,7 @@ working connections alive. The server will send requests in the following format
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../endpoints/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../messages/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -441,19 +355,19 @@ working connections alive. The server will send requests in the following format
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Endpoints
+                Messages
               </div>
             </div>
           </a>
         
         
-          <a href="../operating_modes/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../usage/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Operating modes
+                Usage
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
