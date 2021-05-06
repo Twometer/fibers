@@ -6,7 +6,7 @@ Fibers is a fast and simple message bus and relay server for JSON messages.
 
 `config`: Example configuration for a Fibers server
 
-`lib`: JavaScript library for simple development of clients
+`lib`: JavaScript library for simple development of clients. Install with `npm i @twometer/fiberlib`
 
 `docs`: Markdown documentation sources
 
