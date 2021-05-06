@@ -1,0 +1,23 @@
+{
+  "name": "@twometer/fiberlib",
+  "version": "1.0.0",
+  "description": "Library for connecting to fiber streams",
+  "main": "fiber-stream.js",
+  "module": "fiber-stream.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Twometer/fibers.git"
+  },
+  "author": "Twometer",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Twometer/fibers/issues"
+  },
+  "homepage": "https://github.com/Twometer/fibers#readme",
+  "dependencies": {
+    "cutelog.js": "^1.0.1"
+  }
+}
